@@ -41,6 +41,12 @@ defmodule Ravel.Rules.Size do
     iex> Ravel.Rules.Size.validate %{key: "value", another_key: "value"}, [1], :field_name, []
     :size
   """
+  def validate(value, [size], key, values) when is_binary(size) do
+    {size, _rest} = Integer.parse(size)
+
+    validate value, [size], key, values
+  end
+
   def validate(value, [size], _key, _values) when is_binary(value) do
     case empty?(value) do
       true -> :ok
@@ -68,4 +74,6 @@ defmodule Ravel.Rules.Size do
       false -> if length(value) == size, do: :ok, else: :size
     end
   end
+
+  def validate(nil, _, _, _), do: :ok
 end
