@@ -37,7 +37,7 @@ defmodule Ravel do
   """
   def validate(data, {:n_fields_set, rules}) do
     errors = rules
-    |> Enum.map(fn({key, {:n_rules_set, field_rules}}) -> {key, data, field_rules} end)
+    |> Enum.map(fn({key, field_rules}) -> {key, data, field_rules} end)
     |> Enum.map(&validate_field/1)
     |> Enum.filter(&filter_out_successfull/1)
 
@@ -53,6 +53,17 @@ defmodule Ravel do
   def normalize(rules) when is_list(rules), do: normalize {:fields_set, rules}
   def normalize(rules) when is_map(rules), do: normalize {:fields_set, rules}
   def normalize(rules), do: RulesNormalizer.normalize rules, config :rules
+
+  defp validate_field({key, data, {:n_rules_set, field_rules}}) do
+    validate_field {key, data, field_rules}
+  end
+
+  defp validate_field({key, data, {:n_fields_set, field_rules}}) do
+    case validate(data[key], {:n_fields_set, field_rules}) do
+      :ok -> :ok
+      errors -> {key, errors}
+    end
+  end
 
   defp validate_field({key, data, field_rules}) do
     errors = field_rules
