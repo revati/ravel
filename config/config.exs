@@ -6,7 +6,8 @@ config :ravel, Ravel,
   rules: [
     "required/0": Ravel.Rules.Required,
     "required_if/1": Ravel.Rules.RequiredIf,
-    "required_if/2": Ravel.Rules.RequiredIf
+    "required_if/2": Ravel.Rules.RequiredIf,
+    "size/1": Ravel.Rules.Size
   ]
 
 # This configuration is loaded before any dependency and is restricted

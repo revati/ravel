@@ -26,14 +26,14 @@ defmodule Ravel do
     iex> Ravel.normalize [my_field: "required"]
     {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required]]}]}
 
-    # iex> Ravel.normalize [my_field: "required|min_length:12"]
-    # {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Revent.Validation.Rules.MinLength, "12"]]}]}
+    iex> Ravel.normalize [my_field: "required|size:12"]
+    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.Size, "12"]]}]}
 
-    # iex> Ravel.normalize [my_field: "required", another_field: "required|min_length:12"]
-    # {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required]]}, another_field: {:n_rules_set, [[Revent.Validation.Rules.Required], [Revent.Validation.Rules.MinLength, "12"]]}]}
+    iex> Ravel.normalize [my_field: "required", another_field: "required|size:12"]
+    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required]]}, another_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.Size, "12"]]}]}
 
-    # iex> Ravel.normalize {:n_fields_set, [my_field: {:n_rules_set, [[Revent.Validation.Rules.Required], [Revent.Validation.Rules.MinLength, "12"]]}]}
-    # {:n_fields_set, [my_field: {:n_rules_set, [[Revent.Validation.Rules.Required], [Revent.Validation.Rules.MinLength, "12"]]}]}
+    iex> Ravel.normalize {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.MinLength, "12"]]}]}
+    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.MinLength, "12"]]}]}
   """
   def validate(data, {:n_fields_set, rules}) do
     errors = rules
