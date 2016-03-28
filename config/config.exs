@@ -7,6 +7,8 @@ config :ravel, Ravel,
     "required/0": Ravel.Rules.Required,
     "required_if/1": Ravel.Rules.RequiredIf,
     "required_if/2": Ravel.Rules.RequiredIf,
+    "required_unless/2": Ravel.Rules.RequiredUnless,
+    "required_unless/2": Ravel.Rules.RequiredUnless,
     "size/1": Ravel.Rules.Size
   ]
 
