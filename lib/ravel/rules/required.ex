@@ -1,4 +1,6 @@
 defmodule Ravel.Rules.Required do
+  alias Ravel.Rules.Required
+
   @moduledoc """
     iex> Ravel.Rules.Required.validate nil, %Ravel.Rules.Required{}, :field, []
     false
@@ -30,6 +32,6 @@ defmodule Ravel.Rules.Required do
 
   defstruct name: nil
 
-  def validate(value, %Ravel.Rules.Required{name: name}, key, data), do:
+  def validate(value, %Required{name: name}, key, data), do:
     !Ravel.Blank.blank?(value)
 end
