@@ -1,8 +1,4 @@
 defmodule Ravel do
-  def normalize rules do
-    Ravel.RulesNormalizer.normalize rules
-  end
-
   def validate data, rules do
     errors = rules
     |> Enum.map(fn({key, rule}) -> apply_rule(rule, data, key) end)
