@@ -30,8 +30,8 @@ defmodule Ravel.Rules.Required do
     true
   """
 
-  defstruct name: nil
+  defstruct []
 
-  def validate(value, %Required{name: name}, key, data), do:
+  def validate(value, %Required{}, key, data), do:
     !Ravel.Blank.blank?(value)
 end
