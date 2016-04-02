@@ -3,4 +3,4 @@
 ## Todo
 
 - [ ] Generalized if rule
-- [ ] Nested rules
+- [x] Nested rules
