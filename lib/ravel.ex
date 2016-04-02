@@ -6,15 +6,33 @@ defmodule Ravel do
     iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
     :ok
 
+    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
+    :ok
+
+    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
+    [field_name: [%Ravel.Rules.Minimum{min: 10}]]
+
     iex> Ravel.validate [field_name: nil, another_field: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
     [field_name: [%Ravel.Rules.Required{}], another_field: [%Ravel.Rules.Required{}]]
+
+    iex> Ravel.validate [field_name: [sub_field: nil]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+    [field_name: [sub_field: [%Ravel.Rules.Required{}]]]
+
+    iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+    :ok
   """
 
   def validate(data, {:fields_set, fields}) do
     apply_layer(data, fields, fn(key, rules) -> validate(data, rules, key) end)
   end
 
-  def validate(data, {:rules, rules}, field_name) do
+  defp validate(data, {:rules, {:fields_set, fields}}, field_name) do
+    data = data[field_name]
+
+    validate(data, {:fields_set, fields})
+  end
+
+  defp validate(data, {:rules, rules}, field_name) do
     apply_layer(data, rules, fn(rule) -> apply_rule(rule, data, field_name) end)
   end
 
