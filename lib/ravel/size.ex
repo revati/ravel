@@ -61,6 +61,12 @@ defimpl Ravel.Size, for: BitString do
   def size(x), do: String.length x
 end
 
+defimpl Ravel.Size, for: Atom do
+  def size(nil),   do: 0
+  def size(false), do: 0
+  def size(x),     do: String.length Atom.to_string x
+end
+
 defimpl Ravel.Size, for: Map do
   def size(map), do: map_size(map)
 end
