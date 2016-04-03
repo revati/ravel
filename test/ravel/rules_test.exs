@@ -1,6 +1,7 @@
 defmodule Ravel.RulesTest do
   use ExUnit.Case, async: true
   doctest Ravel.Rules.Between
+  doctest Ravel.Rules.If
   doctest Ravel.Rules.Maximum
   doctest Ravel.Rules.Minimum
   doctest Ravel.Rules.Required
