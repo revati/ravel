@@ -2,5 +2,5 @@
 
 ## Todo
 
-- [ ] Generalized if rule
+- [x] Generalized if rule
 - [x] Nested rules
