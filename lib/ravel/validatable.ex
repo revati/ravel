@@ -38,6 +38,47 @@ defmodule Ravel.Validatable do
     ...> end
     ...> WithValidation3.valid? [name: "some"]
     :ok
+
+    iex> defmodule WithManyValidation do
+    ...>   use Ravel.Validatable
+    ...>   defstruct name: nil, surname: nil
+    ...>   guard :name, [%Ravel.Rules.Required{}]
+    ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
+    ...> end
+    ...> WithManyValidation.rules
+    {:fields_set, %{name: {:rules, [%Ravel.Rules.Required{}]}, surname: {:rules, [%Ravel.Rules.Minimum{min: 5}]}}}
+
+    iex> defmodule WithManyValidation2 do
+    ...>   use Ravel.Validatable
+    ...>   defstruct name: nil, surname: nil
+    ...>   guard :name, [%Ravel.Rules.Required{}]
+    ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
+    ...> end
+    ...> WithManyValidation2.valid? [surname: "doe"]
+    [name: [%Ravel.Rules.Required{}], surname: [%Ravel.Rules.Minimum{min: 5}]]
+
+    iex> defmodule WithManyValidation3 do
+    ...>   use Ravel.Validatable
+    ...>   defstruct name: nil, surname: nil
+    ...>   guard :name, [%Ravel.Rules.Required{}]
+    ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
+    ...> end
+    ...> WithManyValidation3.valid? [surname: "doedoe", name: "name"]
+    :ok
+
+    iex> defmodule Title do
+    ...>   use Ravel.Validatable
+    ...>   defstruct title: nil
+    ...>   guard :title, [%Ravel.Rules.Required{}]
+    ...> end
+    ...> defmodule WithNestedValidation do
+    ...>   use Ravel.Validatable
+    ...>   defstruct title: nil, description: nil
+    ...>   guard :title, Title.rules
+    ...>   guard :description, [%Ravel.Rules.Minimum{min: 5}]
+    ...> end
+    ...> WithNestedValidation.valid? []
+    [title: [title: [%Ravel.Rules.Required{}]]]
   """
   defmacro __using__(_) do
     quote do
