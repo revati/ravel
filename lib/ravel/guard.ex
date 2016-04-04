@@ -1,22 +1,22 @@
-defmodule Ravel.Validatable do
+defmodule Ravel.Guard do
 
   @moduledoc """
     iex> defmodule NoValidation do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil
     ...> end
     ...> NoValidation.rules
     {:fields_set, %{}}
 
     iex> defmodule NoValidation2 do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil
     ...> end
     ...> NoValidation2.valid? []
     :ok
 
     iex> defmodule WithValidation do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...> end
@@ -24,7 +24,7 @@ defmodule Ravel.Validatable do
     {:fields_set, %{name: {:rules, [%Ravel.Rules.Required{}]}}}
 
     iex> defmodule WithValidation2 do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...> end
@@ -32,7 +32,7 @@ defmodule Ravel.Validatable do
     [name: [%Ravel.Rules.Required{}]]
 
     iex> defmodule WithValidation3 do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...> end
@@ -40,7 +40,7 @@ defmodule Ravel.Validatable do
     :ok
 
     iex> defmodule WithManyValidation do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil, surname: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
@@ -49,7 +49,7 @@ defmodule Ravel.Validatable do
     {:fields_set, %{name: {:rules, [%Ravel.Rules.Required{}]}, surname: {:rules, [%Ravel.Rules.Minimum{min: 5}]}}}
 
     iex> defmodule WithManyValidation2 do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil, surname: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
@@ -58,7 +58,7 @@ defmodule Ravel.Validatable do
     [name: [%Ravel.Rules.Required{}], surname: [%Ravel.Rules.Minimum{min: 5}]]
 
     iex> defmodule WithManyValidation3 do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct name: nil, surname: nil
     ...>   guard :name, [%Ravel.Rules.Required{}]
     ...>   guard :surname, [%Ravel.Rules.Minimum{min: 5}]
@@ -67,12 +67,12 @@ defmodule Ravel.Validatable do
     :ok
 
     iex> defmodule Title do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct title: nil
     ...>   guard :title, [%Ravel.Rules.Required{}]
     ...> end
     ...> defmodule WithNestedValidation do
-    ...>   use Ravel.Validatable
+    ...>   use Ravel.Guard
     ...>   defstruct title: nil, description: nil
     ...>   guard :title, Title.rules
     ...>   guard :description, [%Ravel.Rules.Minimum{min: 5}]
