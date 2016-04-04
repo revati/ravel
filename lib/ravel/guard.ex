@@ -77,7 +77,21 @@ defmodule Ravel.Guard do
     ...>   guard :title, Title.rules
     ...>   guard :description, [%Ravel.Rules.Minimum{min: 5}]
     ...> end
-    ...> WithNestedValidation.valid? []
+    ...> WithNestedValidation.rules
+    {:fields_set, %{description: {:rules, [%Ravel.Rules.Minimum{min: 5}]}, title: {:rules, {:fields_set, %{title: {:rules, [%Ravel.Rules.Required{}]}}}}}}
+
+    iex> defmodule Title2 do
+    ...>   use Ravel.Guard
+    ...>   defstruct title: nil
+    ...>   guard :title, [%Ravel.Rules.Required{}]
+    ...> end
+    ...> defmodule WithNestedValidation2 do
+    ...>   use Ravel.Guard
+    ...>   defstruct title: nil, description: nil
+    ...>   guard :title, Title2.rules
+    ...>   guard :description, [%Ravel.Rules.Minimum{min: 5}]
+    ...> end
+    ...> WithNestedValidation2.valid? []
     [title: [title: [%Ravel.Rules.Required{}]]]
   """
   defmacro __using__(_) do
