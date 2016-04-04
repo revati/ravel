@@ -3,5 +3,5 @@ defmodule RavelTest do
   doctest Ravel
   doctest Ravel.Blank
   doctest Ravel.Size
-  doctest Ravel.Validatable
+  doctest Ravel.Guard
 end
