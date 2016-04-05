@@ -1,30 +1,37 @@
 defmodule Ravel.Rules.Required do
-  use Ravel.Rule
+  alias Ravel.Rules.Required
 
-  @doc """
-    iex> Ravel.Rules.Required.validate "", [], :field_name, []
-    :required
+  @moduledoc """
+    iex> Ravel.Rules.Required.validate nil, %Ravel.Rules.Required{}, :field, []
+    false
 
-    iex> Ravel.Rules.Required.validate "a", [], :field_name, []
-    :ok
+    iex> Ravel.Rules.Required.validate 0, %Ravel.Rules.Required{}, :field, []
+    false
 
-    iex> Ravel.Rules.Required.validate [], [], :field_name, []
-    :required
+    iex> Ravel.Rules.Required.validate 5, %Ravel.Rules.Required{}, :field, []
+    true
 
-    iex> Ravel.Rules.Required.validate [1], [], :field_name, []
-    :ok
+    iex> Ravel.Rules.Required.validate "", %Ravel.Rules.Required{}, :field, []
+    false
 
-    iex> Ravel.Rules.Required.validate [1, 2], :field_name, [], []
-    :ok
+    iex> Ravel.Rules.Required.validate "item", %Ravel.Rules.Required{}, :field, []
+    true
 
-    iex> Ravel.Rules.Required.validate {}, [], :field_name, []
-    :required
+    iex> Ravel.Rules.Required.validate [], %Ravel.Rules.Required{}, :field, []
+    false
 
-    iex> Ravel.Rules.Required.validate {1}, [], :field_name, []
-    :ok
+    iex> Ravel.Rules.Required.validate ["item"], %Ravel.Rules.Required{}, :field, []
+    true
 
-    iex> Ravel.Rules.Required.validate {1, 2}, [], :field_name, []
-    :ok
+    iex> Ravel.Rules.Required.validate %{}, %Ravel.Rules.Required{}, :field, []
+    false
+
+    iex> Ravel.Rules.Required.validate %{field: "item"}, %Ravel.Rules.Required{}, :field, []
+    true
   """
-  def validate(value, _options, _key, _values), do: if empty?(value), do: :required, else: :ok
+
+  defstruct []
+
+  def validate(value, %Required{}, key, data), do:
+    !Ravel.Blank.blank?(value)
 end

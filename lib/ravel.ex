@@ -1,97 +1,78 @@
 defmodule Ravel do
-  alias Ravel.RulesNormalizer
-
-  unless Application.get_env(:ravel, Ravel) do
-    raise "Ravel is not configured"
-  end
-
   @moduledoc """
-    Validation library
+    iex> Ravel.validate [field_name: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+    [field_name: [%Ravel.Rules.Required{}]]
 
-    iex> Ravel.validate [], []
+    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
     :ok
 
-    iex> Ravel.validate [], [my_field: "required"]
-    [my_field: [:required]]
-
-    iex> Ravel.validate [], [my_field: "required", my_another_field: [["required"]]]
-    [my_field: [:required], my_another_field: [:required]]
-
-    iex> Ravel.validate [my_field: "ss"], [my_field: "required"]
+    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
     :ok
 
-    iex> Ravel.normalize []
-    {:n_fields_set, []}
+    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
+    [field_name: [%Ravel.Rules.Minimum{min: 10}]]
 
-    iex> Ravel.normalize [my_field: "required"]
-    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required]]}]}
+    iex> Ravel.validate [field_name: nil, another_field: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
+    [field_name: [%Ravel.Rules.Required{}], another_field: [%Ravel.Rules.Required{}]]
 
-    iex> Ravel.normalize [my_field: "required|size:12"]
-    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.Size, "12"]]}]}
+    iex> Ravel.validate [field_name: [sub_field: nil]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+    [field_name: [sub_field: [%Ravel.Rules.Required{}]]]
 
-    iex> Ravel.normalize [my_field: "required", another_field: "required|size:12"]
-    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required]]}, another_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.Size, "12"]]}]}
-
-    iex> Ravel.normalize {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.MinLength, "12"]]}]}
-    {:n_fields_set, [my_field: {:n_rules_set, [[Ravel.Rules.Required], [Ravel.Rules.MinLength, "12"]]}]}
+    iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+    :ok
   """
-  def validate(data, {:n_fields_set, rules}) do
-    errors = rules
-    |> Enum.map(fn({key, field_rules}) -> {key, data, field_rules} end)
-    |> Enum.map(&validate_field/1)
+
+  def validate(data, {:fields_set, fields}) do
+    apply_layer(data, fields, fn(key, rules) -> validate(data, rules, key) end)
+  end
+
+  defp validate(data, {:rules, {:fields_set, fields}}, field_name) do
+    data = data[field_name]
+
+    validate(data, {:fields_set, fields})
+  end
+
+  defp validate(data, {:rules, rules}, field_name) do
+    apply_layer(data, rules, fn(rule) -> apply_rule(rule, data, field_name) end)
+  end
+
+  def validate(data, fields) do
+    validate(data, {:fields_set, fields})
+  end
+
+  defp apply_rule(rule, data, key) do
+    module = rule.__struct__
+    value = data[key]
+
+    case module.validate(value, rule, key, data) do
+      true  -> :ok
+      false -> rule
+    end
+  end
+
+  defp apply_layer(data, items_set, apply_callback) when is_function(apply_callback, 1) do
+    response = items_set
+    |> Enum.map(fn(item) -> apply_callback.(item) end)
     |> Enum.filter(&filter_out_successfull/1)
 
-    case errors do
+    case response do
       [] -> :ok
-      _ -> errors
+      _ -> response
     end
   end
 
-  def validate(_data, []), do: :ok
-  def validate(data, rules), do: validate data, normalize rules
-
-  def normalize(rules) when is_list(rules), do: normalize {:fields_set, rules}
-  def normalize(rules) when is_map(rules), do: normalize {:fields_set, rules}
-  def normalize(rules), do: RulesNormalizer.normalize rules, config :rules
-
-  defp validate_field({key, data, {:n_rules_set, field_rules}}) do
-    validate_field {key, data, field_rules}
-  end
-
-  defp validate_field({key, data, {:n_fields_set, field_rules}}) do
-    case validate(data[key], {:n_fields_set, field_rules}) do
-      :ok -> :ok
-      errors -> {key, errors}
-    end
-  end
-
-  defp validate_field({key, data, field_rules}) do
-    errors = field_rules
-    |> Enum.map(fn([rule|options]) -> {key, rule, options, data} end)
-    |> Enum.map(&apply_rule/1)
+  defp apply_layer(data, items_set, apply_callback) when is_function(apply_callback, 2) do
+    response = items_set
+    |> Enum.map(fn({key, item}) -> {key, apply_callback.(key, item)} end)
     |> Enum.filter(&filter_out_successfull/1)
-    |> Enum.map(&convert_to_message/1)
 
-    case errors do
+    case response do
       [] -> :ok
-      _ -> {key, errors}
+      _ -> response
     end
-  end
-
-  defp apply_rule({key, rule, options, data}) do
-    {apply(rule, :validate, [data[key], options, key, data]), key, options}
   end
 
   defp filter_out_successfull(:ok), do: false
-  defp filter_out_successfull({:ok, _, _}), do: false
-  defp filter_out_successfull(error), do: true
-
-  defp config, do: Application.get_env(:ravel, Ravel)
-  defp config(key), do: Keyword.get(config, key)
-  defp config(key, default), do: Keyword.get(config, key, default)
-
-  defp convert_to_message({error, _key, _options}) do
-    # Internationalizing error messages?
-    error
-  end
+  defp filter_out_successfull({_, :ok}), do: false
+  defp filter_out_successfull(_), do: true
 end
