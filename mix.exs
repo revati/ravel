@@ -7,6 +7,8 @@ defmodule Ravel.Mixfile do
      elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     package: package,
+     description: "Extendable validation for Elixir",
      deps: deps]
   end
 
@@ -15,13 +17,8 @@ defmodule Ravel.Mixfile do
   end
 
   defp deps do
-    []
-  end
-
-  defp description do
-    """
-    Extendable validation for Elixir
-    """
+    [{:earmark, "~> 0.1", only: :dev},
+     {:ex_doc, "~> 0.11", only: :dev}]
   end
 
   defp package do
