@@ -28,6 +28,9 @@ defprotocol Ravel.Size do
     iex> Ravel.Size.size ""
     0
 
+    iex> Ravel.Size.size :"12345678"
+    8
+
     iex> Ravel.Size.size "12345678"
     8
 
