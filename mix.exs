@@ -18,6 +18,12 @@ defmodule Ravel.Mixfile do
     []
   end
 
+  defp description do
+    """
+    Extendable validation for Elixir
+    """
+  end
+
   defp package do
     [maintainers: ["Roberts Gulans"],
      licenses: ["MIT"],
