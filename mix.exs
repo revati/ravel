@@ -20,8 +20,7 @@ defmodule Ravel.Mixfile do
       test_coverage:   [tool: ExCoveralls],
       docs: [
         source_ref: "v#{@version}",
-        readme:     "README.md",
-        main:       "README",
+        main:       @name,
         canonical:  @docs_url,
         source_url: @repository_url
       ]
