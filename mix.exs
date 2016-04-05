@@ -2,7 +2,7 @@ defmodule Ravel.Mixfile do
   use Mix.Project
 
   @name          "Ravel"
-  @version        "0.0.1"
+  @version        "0.0.2"
   @docs_url       "http://hexdocs.pm/ravel"
   @repository_url "https://github.com/revati/ravel"
 
