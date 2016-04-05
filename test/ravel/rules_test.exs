@@ -4,5 +4,6 @@ defmodule Ravel.RulesTest do
   doctest Ravel.Rules.IfField
   doctest Ravel.Rules.Maximum
   doctest Ravel.Rules.Minimum
+  doctest Ravel.Rules.Present
   doctest Ravel.Rules.Required
 end
