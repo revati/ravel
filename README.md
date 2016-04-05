@@ -1,7 +1,14 @@
 # Validation for Elixir (Under development)
 
 - [x] Ability to nest rules for nested structs
+- [ ] Hooks before validation rules (normalizers?) (for example normalizes 2,55 to 2.55)
 
+Integrations
+
+- [ ] plug -> for validating http requests
+- [ ] ecto -> to validate with database
+- [ ] gettext -> error messages internationalization
+ 
 ## Rules (from Laravel)
 
 - [x] Accepted
