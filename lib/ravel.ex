@@ -1,27 +1,41 @@
 defmodule Ravel do
-  @moduledoc """
-    iex> Ravel.validate [field_name: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
-    [field_name: [%Ravel.Rules.Required{}]]
+  @moduledoc ~S"""
+  Ravel is validation library for elixir. Mainly created for learning purposes.
 
-    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
-    :ok
+  ## Usage
 
-    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
-    :ok
+  Maps and named lists can be used as containers for data that must be validated.
 
-    iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
-    [field_name: [%Ravel.Rules.Minimum{min: 10}]]
-
-    iex> Ravel.validate [field_name: nil, another_field: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
-    [field_name: [%Ravel.Rules.Required{}], another_field: [%Ravel.Rules.Required{}]]
-
-    iex> Ravel.validate [field_name: [sub_field: nil]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
-    [field_name: [sub_field: [%Ravel.Rules.Required{}]]]
-
-    iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
-    :ok
+      iex> data = [field: "value"]
+      iex> rules = {:fields_set, [field: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> Ravel.validate data, rules
+      :ok
   """
 
+  @doc """
+  Is used to validate passed data with passed rules.
+
+      iex> Ravel.validate [field_name: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      [field_name: [%Ravel.Rules.Required{}]]
+
+      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      :ok
+
+      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
+      :ok
+
+      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
+      [field_name: [%Ravel.Rules.Minimum{min: 10}]]
+
+      iex> Ravel.validate [field_name: nil, another_field: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
+      [field_name: [%Ravel.Rules.Required{}], another_field: [%Ravel.Rules.Required{}]]
+
+      iex> Ravel.validate [field_name: [sub_field: nil]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      [field_name: [sub_field: [%Ravel.Rules.Required{}]]]
+
+      iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      :ok
+  """
   def validate(data, {:fields_set, fields}) do
     apply_layer(fields, fn(key, rules) -> validate(data, rules, key) end)
   end
