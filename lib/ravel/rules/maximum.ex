@@ -14,7 +14,7 @@ defmodule Ravel.Rules.Maximum do
 
   defstruct max: nil
 
-  def validate(value, %Maximum{max: max}, key, data) do
+  def validate(value, %Maximum{max: max}, _key, _data) do
     case Ravel.Blank.blank? value do
       true  -> true
       false ->

@@ -14,5 +14,5 @@ defmodule Ravel.Rules.Present do
 
   defstruct []
 
-  def validate(value, %Present{}, key, data), do: Keyword.has_key? data, key
+  def validate(_value, %Present{}, key, data), do: Keyword.has_key? data, key
 end

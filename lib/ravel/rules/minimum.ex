@@ -14,7 +14,7 @@ defmodule Ravel.Rules.Minimum do
 
   defstruct min: nil
 
-  def validate(value, %Minimum{min: min}, key, data) do
+  def validate(value, %Minimum{min: min}, _key, _data) do
     case Ravel.Blank.blank? value do
       true  -> true
       false ->

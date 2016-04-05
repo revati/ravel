@@ -23,7 +23,7 @@ defmodule Ravel do
   """
 
   def validate(data, {:fields_set, fields}) do
-    apply_layer(data, fields, fn(key, rules) -> validate(data, rules, key) end)
+    apply_layer(fields, fn(key, rules) -> validate(data, rules, key) end)
   end
 
   defp validate(data, {:rules, {:fields_set, fields}}, field_name) do
@@ -33,11 +33,7 @@ defmodule Ravel do
   end
 
   defp validate(data, {:rules, rules}, field_name) do
-    apply_layer(data, rules, fn(rule) -> apply_rule(rule, data, field_name) end)
-  end
-
-  def validate(data, fields) do
-    validate(data, {:fields_set, fields})
+    apply_layer(rules, fn(rule) -> apply_rule(rule, data, field_name) end)
   end
 
   defp apply_rule(rule, data, key) do
@@ -50,7 +46,7 @@ defmodule Ravel do
     end
   end
 
-  defp apply_layer(data, items_set, apply_callback) when is_function(apply_callback, 1) do
+  defp apply_layer(items_set, apply_callback) when is_function(apply_callback, 1) do
     response = items_set
     |> Enum.map(fn(item) -> apply_callback.(item) end)
     |> Enum.filter(&filter_out_successfull/1)
@@ -61,7 +57,7 @@ defmodule Ravel do
     end
   end
 
-  defp apply_layer(data, items_set, apply_callback) when is_function(apply_callback, 2) do
+  defp apply_layer(items_set, apply_callback) when is_function(apply_callback, 2) do
     response = items_set
     |> Enum.map(fn({key, item}) -> {key, apply_callback.(key, item)} end)
     |> Enum.filter(&filter_out_successfull/1)

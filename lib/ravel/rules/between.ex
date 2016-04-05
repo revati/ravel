@@ -18,7 +18,7 @@ defmodule Ravel.Rules.Between do
 
   defstruct min: nil, max: nil
 
-  def validate(value, %Between{min: min, max: max}, key, data) do
+  def validate(value, %Between{min: min, max: max}, _key, _data) do
     case Ravel.Blank.blank? value do
       true  -> true
       false ->
