@@ -35,9 +35,9 @@ defmodule Ravel.Mixfile do
   defp deps do
     [
       {:excoveralls, "~> 0.5.1", only: [:dev, :test]},
-      {:ex_doc,      "~> 0.11", only: :docs},
-      {:earmark,     "~> 0.1", only: :docs},
-      {:inch_ex,     "~> 0.2", only: :docs}
+      {:ex_doc,      "~> 0.11.4", only: :docs},
+      {:earmark,     "~> 0.2.1", only: :docs},
+      {:inch_ex,     "~> 0.5.1", only: :docs}
     ]
   end
 

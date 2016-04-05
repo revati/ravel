@@ -10,7 +10,7 @@ defmodule Ravel.Rules.Accepted do
 
   iex> Ravel.Rules.Accepted.validate "value", %Ravel.Rules.Accepted{}, :field, [field: "value"]
   false
-  
+
   iex> Ravel.Rules.Accepted.validate 1, %Ravel.Rules.Accepted{}, :field, [field: 1]
   true
 
@@ -19,7 +19,7 @@ defmodule Ravel.Rules.Accepted do
 
   iex> Ravel.Rules.Accepted.validate "on", %Ravel.Rules.Accepted{}, :field, [field: "on"]
   true
-  
+
   iex> Ravel.Rules.Accepted.validate "yes", %Ravel.Rules.Accepted{}, :field, [field: "yes"]
   true
   """
