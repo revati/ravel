@@ -58,3 +58,8 @@ Integrations
 - [ ] Unique (Database)
 - [ ] URL
 - [x] Accepted
+
+## Higher order rules
+
+- [x] if_field -> if other field exists, or it has specific value, validate with some other rule.
+- [ ] if_not_field -> reverse of if_field
