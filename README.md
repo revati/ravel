@@ -63,3 +63,9 @@ Integrations
 
 - [x] if_field -> if other field exists, or it has specific value, validate with some other rule.
 - [ ] if_not_field -> reverse of if_field
+
+Copyright and License
+
+Copyright (c) 2016, Roberts Gulans.
+
+Phoenix source code is licensed under the [MIT License](LICENSE.md).
