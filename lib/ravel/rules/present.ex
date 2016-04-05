@@ -5,9 +5,6 @@ defmodule Ravel.Rules.Present do
     iex> Ravel.Rules.Present.validate nil, %Ravel.Rules.Present{}, :field, []
     false
 
-    iex> Ravel.Rules.Present.validate "value", %Ravel.Rules.Present{}, :field, []
-    false
-
     iex> Ravel.Rules.Present.validate 5, %Ravel.Rules.Present{}, :field, [field: 5]
     true
 
