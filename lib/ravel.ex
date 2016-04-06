@@ -12,6 +12,11 @@ defmodule Ravel do
       :ok
   """
 
+  @type data :: list | map
+  @type rules :: {:fields_set, list | map}
+  @type field_rules :: {:rules, list | rules}
+  @type response :: :ok | list
+
   @doc """
   Is used to validate passed data with passed rules.
 
@@ -36,6 +41,7 @@ defmodule Ravel do
       iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
       :ok
   """
+  @spec validate(data, rules | field_rules) :: response
   def validate(data, {:fields_set, fields}) do
     apply_layer(fields, fn(key, rules) -> validate(data, rules, key) end)
   end
