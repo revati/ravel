@@ -107,7 +107,7 @@ defmodule Ravel.Guard do
     quote do
       def rules, do: {:fields_set, @rules}
  
-      def valid?(data), do: Ravel.validate data, rules
+      def valid?(data), do: Ravel.Validator.validate data, rules
     end
   end
 
