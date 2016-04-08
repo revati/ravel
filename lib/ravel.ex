@@ -6,10 +6,43 @@ defmodule Ravel do
 
   Maps and named lists can be used as containers for data that must be validated.
 
-      iex> data = [field: "value"]
-      iex> rules = {:fields_set, [field: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> data  = [field_name: "value"]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
       iex> Ravel.validate data, rules
       :ok
+
+  If error occurs validation rule it self is returned. See examples
+
+      iex> data  = [field_name: nil]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> Ravel.validate data, rules
+      [field_name: [%Ravel.Rules.Required{}]]
+
+      iex> data  = [field_name: "value"]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Minimum{min: 6}]}]}
+      iex> Ravel.validate data, rules
+      [field_name: [%Ravel.Rules.Minimum{min: 6}]]
+
+  See Ravel.Rules namespace for all predefined rules.
+
+  ### Using with structs
+
+  You can define defmodule with struct like so
+
+      defmodule SomeStruct do
+        use Ravel.Guard
+
+        defstruct field: nil, another_field: []
+
+        guard :name, [%Ravel.Rules.Required{}]
+        guard :another_field, [%Ravel.Rules.Maximum{max: 10}]
+      end
+
+  And than you can validate data against struct rules like so
+
+      # iex> data = [name: nil]
+      # iex> SomeStruct.valid? data
+      # :ok
   """
 
   @type data :: list | map
@@ -19,26 +52,41 @@ defmodule Ravel do
 
   @doc """
   Is used to validate passed data with passed rules.
+  Applys rules to data and checks if all rules are passed
 
-      iex> Ravel.validate [field_name: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> data  = [field_name: nil]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> Ravel.validate data, rules
       [field_name: [%Ravel.Rules.Required{}]]
 
-      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> data  = [field_name: "value"]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> Ravel.validate data, rules
       :ok
 
-      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
+      iex> data  = [field_name: "value"]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 5}]}]}
+      iex> Ravel.validate data, rules
       :ok
 
-      iex> Ravel.validate [field_name: "value"], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
+      iex> data  = [field_name: "value"]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}, %Ravel.Rules.Minimum{min: 10}]}]}
+      iex> Ravel.validate data, rules
       [field_name: [%Ravel.Rules.Minimum{min: 10}]]
 
-      iex> Ravel.validate [field_name: nil, another_field: nil], {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> data  = [field_name: nil, another_field: nil]
+      iex> rules = {:fields_set, [field_name: {:rules, [%Ravel.Rules.Required{}]}, another_field: {:rules, [%Ravel.Rules.Required{}]}]}
+      iex> Ravel.validate data, rules
       [field_name: [%Ravel.Rules.Required{}], another_field: [%Ravel.Rules.Required{}]]
 
-      iex> Ravel.validate [field_name: [sub_field: nil]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      iex> data  = [field_name: [sub_field: nil]]
+      iex> rules = {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      iex> Ravel.validate data, rules
       [field_name: [sub_field: [%Ravel.Rules.Required{}]]]
 
-      iex> Ravel.validate [field_name: [sub_field: "value"]], {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      iex> data  = [field_name: [sub_field: "value"]]
+      iex> rules = {:fields_set, [field_name: {:rules, {:fields_set, [sub_field: {:rules, [%Ravel.Rules.Required{}]}]}}]}
+      iex> Ravel.validate data, rules
       :ok
   """
   @spec validate(data, rules | field_rules) :: response
